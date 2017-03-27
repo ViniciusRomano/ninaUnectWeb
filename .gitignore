@@ -1,0 +1,4 @@
+/node_modules
+/public
+/.idea
+/db.sqlite3
