@@ -13,22 +13,25 @@ class Funcionario(models.Model):
     def marcar_entrada(self):
         "cria uma nova permanencia se a ultima foi fechada"
         try:
-            p = Permanencia.objects.filter(funcionario=self).latest('entrada')
-            if p.saida != None:
-                Permanencia(funcionario=self).save()
+            p = Permanencia.objects.filter(funcionario=self).latest('entrada') #pega ultima permanencia criada pelo funcionario
+            if p.saida != None: #se existir uma saida
+                Permanencia(funcionario=self).save() #cria nova permanencia
             else:
-                print ("Certifique-se que sua ultima entrada possui uma saida")
-        except Permanencia.DoesNotExist:
+                print ("Certifique-se que sua ultima permanencia possui uma saida")
+        except Permanencia.DoesNotExist: #primeira permanencia
             Permanencia(funcionario=self).save()
         
     def marcar_saida(self):
         "escreve horario de saida na ultima permanencia, se a mesma nao possui horario de saida"
-        p = Permanencia.objects.filter(funcionario=self).latest('entrada')
-        if p.saida == None:
-            p.saida = timezone.now()
-            p.save()
-        else:
-            print ("Faca uma entrada primeiro")
+        try:
+            p = Permanencia.objects.filter(funcionario=self).latest('entrada')
+            if p.saida == None:
+                p.saida = timezone.now()
+                p.save()
+            else:
+                print ("Faca uma entrada primeiro")
+        except Permanencia.DoesNotExist:
+            print ("Nao existem permanencias")
 
     def __unicode__(self):
         return self.nome
