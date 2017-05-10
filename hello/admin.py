@@ -7,6 +7,7 @@ class FuncionarioAdmin(admin.ModelAdmin):
 
 class PermanenciaAdmin(admin.ModelAdmin):
     list_display = ('funcionario', 'entrada', 'saida')
+    list_filter = ('funcionario', 'entrada')
 
 # Register your models here.
 admin.site.register(Funcionario, FuncionarioAdmin)
