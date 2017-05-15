@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+
+{% block content %}
+  <div class="container">
+
+<h1> Hoje </h1>
+<ul>
+
+{% for p in permanencias %}
+    <li>{{ p.funcionario }} -> {{ p.entrada.time }} - {{ p.saida.time }} - {{ p.reposicao }}</li>
+{% endfor %}
+
+</ul>
+
+</div>
+
+{% endblock %}
