@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from django.http import HttpResponse
-from datetime import date, datetime
+from datetime import date, timedelta
+from django.utils import timezone
 
 from .models import Greeting
 from .models import Permanencia
@@ -21,21 +22,30 @@ def db(request):
     return render(request, 'db.html', {'greetings': greetings})
 
 def permanencias(request, ra, dia, mes, ano):
-    funcionario = Funcionario.objects.filter(ra=ra).first()
-    permanencias = Permanencia.objects.filter(funcionario=funcionario).filter(entrada__day=dia, entrada__month=mes, entrada__year=ano)
-    return render(request, 'permanencia.html', {'permanencias': permanencias, 'funcionario': funcionario, 'data': date(int(ano), int(mes), int(dia))})
+    funcionario = Funcionario.objects.get_by_ra(ra)
+    permanencias = Permanencia.objects.get_by_funcionario(ra).get_by_data(dia, mes, ano)
+    return render(request, 'permanencia.html', {'permanencias': permanencias, 'funcionario': funcionario, 'data': date(int(ano), int(mes), int(dia)), 'minutos': tempo(permanencias)})
 
 def entrada(request, ra):
-    return HttpResponse(Funcionario.objects.filter(ra=ra).first().marcar_entrada())
+    return HttpResponse(Permanencia.objects.nova_entrada(ra))
 
 def saida(request, ra):
-    return HttpResponse(Funcionario.objects.filter(ra=ra).first().marcar_saida())
+    return HttpResponse(Permanencia.objects.nova_saida(ra))
 
 def hoje(request):
-    hoje = datetime.now()
-    permanencias = Permanencia.objects.filter(entrada__day=hoje.day, entrada__month=hoje.month, entrada__year=hoje.year)
-    return render(request, 'agora.html', {'permanencias': permanencias, 'data': hoje})
+    hoje = timezone.now()
+    return render(request, 'hoje.html', {'permanencias': Permanencia.objects.get_by_data(hoje.day, hoje.month, hoje.year), 'data': hoje})
 
 def dia(request, dia, mes, ano):
-    permanencias = Permanencia.objects.filter(entrada__day=dia, entrada__month=mes, entrada__year=ano)
+    permanencias = Permanencia.objects.get_by_data(dia, mes, ano)
     return render(request, 'dia.html', {'permanencias': permanencias, 'data': date(int(ano), int(mes), int(dia))})
+
+def tempo(permanencias):
+    tempo = timedelta()
+    for permanencia in permanencias:
+            tempo += (permanencia.saida if permanencia.saida != None else timezone.now()) - permanencia.entrada
+    return (tempo.seconds//60)%60
+
+
+    #dias, horas, minutos
+    #td.days, td.seconds//3600, (td.seconds//60)%60
