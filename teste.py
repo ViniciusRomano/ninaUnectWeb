@@ -1,5 +1,5 @@
 import django, os
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "gettingstarted.settings")
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "nina.settings")
 django.setup()
 
 from hello.models import Funcionario
