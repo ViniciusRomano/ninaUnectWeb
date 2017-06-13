@@ -16,7 +16,6 @@ import dj_database_url
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
 
-from local_settings import *
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.8/howto/deployment/checklist/
@@ -35,6 +34,7 @@ INSTALLED_APPS = (
     'pessoal',
     'permanencia',
     'relatorio',
+    'rest_framework',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -78,6 +78,7 @@ USE_I18N = True
 USE_L10N = True
 USE_TZ = True
 
+from local_settings import *
 
 # Update database configuration with $DATABASE_URL.
 db_from_env = dj_database_url.config(conn_max_age=500)
@@ -104,3 +105,9 @@ STATICFILES_DIRS = (
 # https://warehouse.python.org/project/whitenoise/
 STATICFILES_STORAGE = 'whitenoise.django.GzipManifestStaticFilesStorage'
 
+REST_FRAMEWORK = {
+
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticated',
+    )
+}
