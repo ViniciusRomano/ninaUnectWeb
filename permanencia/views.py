@@ -2,25 +2,20 @@ from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from pessoal.models import Funcionario
 from .models import Permanencia
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+from django.contrib.auth.decorators import login_required
+from .utils import usuario_desktop
 
-def entrada(request, ra, token):
-    funcionario = Funcionario.objects.get_by_ra(ra)
-    if verificar_token(token):
-        return HttpResponse(Permanencia.nova_entrada(funcionario))
-    else:
-        return HttpResponse("token incorreto")
+@api_view()
+def entrada(request, ra):
+    if usuario_desktop(request):
+        funcionario = Funcionario.objects.get_by_ra(ra)
+        return Response(Permanencia.nova_entrada(funcionario))
 
-def saida(request, ra, token):
-    funcionario = Funcionario.objects.get_by_ra(ra)
-    if verificar_token(token):
-        return HttpResponse(Permanencia.nova_saida(funcionario))
-    else:
-        return HttpResponse("token incorreto")
+@api_view()
+def saida(request, ra):
+    if usuario_desktop(request):
+        funcionario = Funcionario.objects.get_by_ra(ra)
+        return Response(Permanencia.nova_saida(funcionario))
 
-def verificar_token(token):
-    #realizar verificacao
-    if token == '123':
-        return True
-    else:
-        return False
-    
