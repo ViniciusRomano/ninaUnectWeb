@@ -22,8 +22,15 @@ def funcionario(request, ra):
     """
     Relatorio funcionario
     """
+    data = date.today()
+
+    dia = request.GET.get('dia', None)
+    mes = request.GET.get('mes', data.month)
+    ano = request.GET.get('ano', data.year)
     funcionario = Funcionario.objects.get_by_ra(ra)
-    permanencias = funcionario.permanencias.all()
+    permanencias = funcionario.permanencias.ano(ano).mes(mes)
+    if dia is not None:
+        permanencias = permanencias.dia(dia)
     return render(request, 'permanencia.html', {'permanencias': permanencias, 'funcionario': funcionario, 'tempo': tempo(permanencias)})
 
 def tempo(permanencias):

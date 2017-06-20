@@ -1,10 +1,7 @@
-from django.shortcuts import render, redirect
-from django.http import HttpResponse
 from pessoal.models import Funcionario
 from .models import Permanencia
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from django.contrib.auth.decorators import login_required
 from .utils import usuario_desktop
 
 @api_view()
