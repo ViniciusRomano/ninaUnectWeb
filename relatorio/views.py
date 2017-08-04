@@ -3,22 +3,23 @@ from django.shortcuts import render, redirect
 from datetime import date, timedelta, datetime
 
 from permanencia.models import Permanencia
-from pessoal.models import Funcionario
+from pessoal.models import Funcionario, Empresa
 
 # Create your views here.
-def dia(request, dia, mes, ano):
+def dia(request, empresa, dia, mes, ano):
     """
     Permanencias de uma data especifica    
     """
     data = date(int(ano), int(mes), int(dia))
-    permanencias = Permanencia.objects.ano(ano).mes(mes).dia(dia)
+    empresa = Empresa.objects.all().get(pk=empresa)
+    permanencias = Permanencia.objects.empresa(empresa).ano(ano).mes(mes).dia(dia)
     return render(request, 'dia.html', {'permanencias': permanencias, 'data': data})
 
-def hoje(request):
+def hoje(request, empresa):
     data = date.today()
-    return redirect('dia', dia=data.day, mes=data.month, ano=data.year)
+    return redirect('dia', empresa=empresa, dia=data.day, mes=data.month, ano=data.year)
 
-def funcionario(request, ra):
+def funcionario(request, empresa, ra):
     """
     Relatorio funcionario
     """
@@ -27,7 +28,8 @@ def funcionario(request, ra):
     dia = request.GET.get('dia', None)
     mes = request.GET.get('mes', data.month)
     ano = request.GET.get('ano', data.year)
-    funcionario = Funcionario.objects.get_by_ra(ra)
+    empresa = Empresa.objects.all().get(pk=empresa)
+    funcionario = Funcionario.objects.get_by_empresa(empresa).get_by_ra(ra)
     permanencias = funcionario.permanencias.ano(ano).mes(mes)
     if dia is not None:
         permanencias = permanencias.dia(dia)

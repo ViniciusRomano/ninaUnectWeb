@@ -2,7 +2,13 @@ from __future__ import unicode_literals
 
 from django.db import models
 
+class Empresa(models.Model):
+    nome = models.CharField(max_length=150)
+    def __str__(self):
+        return self.nome
+
 class Departamento(models.Model):
+    empresa = models.ForeignKey(Empresa, related_name='departamentos', null=True)
     nome = models.CharField(max_length=150)
     def __str__(self):
         return self.nome
@@ -16,6 +22,9 @@ class FuncionarioQuerySet(models.QuerySet):
 
     def get_by_nome(self, nome):
         return self.filter(nome__icontains=nome) #icontains(like ignore case)
+
+    def get_by_empresa(self, empresa):
+        return self.filter(departamento__empresa=empresa)
 
 class Funcionario(models.Model):
     ra = models.PositiveIntegerField(primary_key=True)

@@ -17,6 +17,9 @@ class PermanenciaQuerySet(models.QuerySet):
 
     def reposicao(self, reposicao):
         return self.filter(reposicao=reposicao)
+
+    def empresa(self, empresa):
+        return self.filter(funcionario__departamento__empresa=empresa)
         
 class Permanencia(models.Model):
     funcionario = models.ForeignKey(Funcionario, related_name='permanencias')
@@ -37,7 +40,8 @@ class Permanencia(models.Model):
                 return "Certifique-se que sua ultima permanencia possui uma saida"
         except Permanencia.DoesNotExist: #primeira permanencia
             Permanencia(funcionario=funcionario).save()
-        return "Entrada realizada"
+        mensagem = "%s Entrada: " % funcionario.nome
+        return mensagem + timezone.now().__str__() 
     
     @classmethod
     def nova_saida(self, funcionario):
@@ -53,4 +57,5 @@ class Permanencia(models.Model):
                 return "Faca uma entrada primeiro"
         except Permanencia.DoesNotExist:
             return "Nao existem permanencias"
-        return "Saida realizada"
+        mensagem = "Saida %s registrada as " % funcionario.nome
+        return mensagem + timezone.now().__str__() 
