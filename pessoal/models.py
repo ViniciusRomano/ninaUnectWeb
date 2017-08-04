@@ -8,7 +8,7 @@ class Empresa(models.Model):
         return self.nome
 
 class Departamento(models.Model):
-    empresa = models.ForeignKey(Empresa, related_name='departamentos', null=True)
+    empresa = models.ForeignKey(Empresa, related_name='departamentos')
     nome = models.CharField(max_length=150)
     def __str__(self):
         return self.nome
